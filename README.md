@@ -1,5 +1,55 @@
 # 최재학 202030432
-## [ 09월 29일]
+## [10월 01일]
+> 
+- 6초 후 문자 출력
+```
+import React from "react";
+
+class App extends React.Component {
+  state = {
+    isLoading: true,
+  };
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ isLoading: false });
+    }, 6000);
+  }
+
+  render() {
+    const { isLoading } = this.state;
+    return (
+      <div>
+        <h1>{ isLoading ? 'Loading...' : 'We are ready' }</h1>
+      </div>
+    )
+  }
+}
+
+export default App
+```
+- componentDidMount()를 쓴 이유: 초기 렌더링이 끝난 후에 작동하게 하기 위해(?)
+- npm install axios : axios 설치
+- 크롬 JSON viewer 설치
+- https://yts.mx/api/v2/list_movies.json 확인
+- API 호출
+```
+import axios from "axios";
+
+componentDidMount() {
+    axios.get('https://yts-proxy.now.sh/list_movies.json');
+  }
+
+```
+- axios는 네트워크를 사용하므로 느리게 동작함
+- axios.get()이 반환한 영화 데이터를 받기 전에 끝나므로 실행을 분리하고 async, await을 사용
+- async : 비동기라 알려 기다리게 함(?)
+- await : axios.get()의 실행 완료를 기다렸다 진행하게 함
+- ES6부터 객체의 키와 대입할 변수의 이름이 같다면 코드를 축약할 수 있음.
+- 예) { movies: movies } -> { movies }
+
+
+## [09월 29일]
 > prop-types, state
 - master branch를 main branch로 변경
 인종차별의 뉘앙스를 지우기 위해 변경
