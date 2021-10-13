@@ -1,5 +1,165 @@
 # 최재학 202030432
-## [10월 01일]
+## [10월 13일]
+>
+- isLoding state true -> false로 업데이트
+- 영화 데이터를 정의 관리하기 위해 prop-types 사용
+### Movie 컴포넌트 생성
+```js
+import React from 'react';
+import PropTypes from 'prop-types'
+// props 추가 및 출력
+function Movie(id, title, year, summary, posters) {
+    return (
+        <h1>{title}</h1>
+    )
+}
+// API가 보내준 데이터 반영
+Movie.prototype = {
+    id: PropTypes.number.isRequired,
+    year: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    summary: PropTypes.string.isRequired,
+    poster: PropTypes.string.isRequired
+};
+
+export default Movie
+```
+
+- Movie 컴포너트에 props 전달
+```js
+import React from "react";
+import axios from "axios";
+import Movie from "./Movie";
+
+class App extends React.Component {
+  state = {
+    isLoading: true,
+    movies: []
+  };
+
+  getMovies = async () => {
+    const {
+      data: {
+        data: { movies }
+      }
+    } = await axios.get('https://yts-proxy.now.sh/list_movies.json?sort_by=rating');
+    this.setState({movies, isLoading: false});
+  }
+
+  componentDidMount() {
+    this.getMovies;
+  }
+
+  render() {
+    const { isLoading, movies } = this.state;
+    return (
+      <div>
+        { isLoading ? 'Loading...' : movies.map((movie => {
+          console.log(movie);
+          return <Movie
+            key={movie.id} //key prop 추가
+            id={movie.id}
+            year={movie.year}
+            title={movie.title}
+            summary={movie.summary}
+            poster={movie.medium_cover_image}
+          />
+          }))
+        }
+      </div>
+    )
+  }
+}
+
+export default App
+```
+- html 추가
+```js
+import React from "react";
+import axios from "axios";
+import Movie from "./Movie";
+import "./App.css"
+
+class App extends React.Component {
+  state = {
+    isLoading: true,
+    movies: []
+  };
+
+  getMovies = async () => {
+    const {
+      data: {
+        data: { movies }
+      }
+    } = await axios.get('https://yts-proxy.now.sh/list_movies.json?sort_by=rating');
+    this.setState({movies, isLoading: false});
+  };
+
+  componentDidMount() {
+    this.getMovies;
+  }
+
+  render() {
+    const { isLoading, movies } = this.state;
+    return (
+      <section className="container">
+        { isLoading ? (
+            <div className="loader">
+              <span className="Loader-text">Loading...</span>
+            </div>
+        ) : (
+          <div className="movies">
+            {
+              movies.map((movie) => {
+                return (
+                  <Movie 
+                    key={movie.id}
+                    id={movie.id}
+                    year={movie.year}
+                    title={movie.title}
+                    summary={movie.summary}
+                    poster={movie.medium_cover_image}
+                    genres={movie.genres}
+                  />
+                )})}
+            </div>
+          )}
+      </section>
+    )
+  }
+}
+
+export default App
+```
+```js
+import PropTypes from 'prop-types'
+import "./Movie.css"
+
+function Movie(id, title, year, summary, posters, genres) {
+    return (
+        <div className='movie'>
+            <img src={poster} alt={title} title={title}/>
+            <div className="movie-data">
+                <h3 className="movie-title">{title}</h3>
+                <h5 className="movie-year">{year}</h5>
+                <p className="movie-summary">{summary}</p>
+            </div>    
+        </div>
+    );
+}
+
+Movie.propType = {
+    id: PropTypes.number.isRequired,
+    year: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    summary: PropTypes.string.isRequired,
+    poster: PropTypes.string.isRequired
+    genres: PropTypes.arrayOf(PropTypes.string).isRequired
+};
+
+export default Movie
+```
+## [10월 06일]
 > 
 - 6초 후 문자 출력
 ```
