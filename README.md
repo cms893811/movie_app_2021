@@ -1,6 +1,76 @@
 # 최재학 202030432
 ## [10월 27일]
->
+>router
+- genres props는 배열이므로 map 함수를 이용해 출력
+```js
+<ul className="moive-geners">
+  {genres.map((genre) => {
+    return (
+      <li className="movie-genre">{genre}</li>
+    )
+  })}
+</ul>
+```
+- li에 key props 추가
+```js
+<ul className="moive-geners">
+  {genres.map((genre) => {
+    return (
+      <li key={index} className="movie-genre">{genere}</li>
+    )
+  })}
+</ul>
+```
+- 시놉시스 180자로 제한하기
+```js
+<p className="movie-summary">{summary.slice(0, 180)}...</p>
+```
+- react-router-dom 설치 :npm install react-router-dom
+- 폴더 정리: src\components, src\routes 생성
+- src\components\Movie.js, src\components\Movie.css 로 이동
+- src\routes\Home.js, src\routes\Home.css, src\routes\About.js 생성
+- Home.js에 App.js 코드 복사, Home.css 작성
+- App.js 재작성
+```js
+import "./App.css"
+import { HashRouter, Route } from "react-router-dom";
+import About from './routes/About';
+import Home from './routes/Home';
+
+function App() {
+    return  (
+        <HashRouter>
+            <Route path="/" component={Home} />
+            <Route path="/about" component={About} />
+        </HashRouter>
+    );
+}
+
+export default App;
+```
+- 라우터는 사용자가 입력한 url을 통해 특정 컴포넌트를 불러줌
+- Route에는 2가지 props 를 전달할 수 있는데 하나는 URL을 위한 path props, URL에 맞는 컴포넌트를 불러 주기 위한 component pops
+- 라우터는 사용자가 접속 시 path props에 있는 모든 컴포넌트가 그려지가 됨
+- 이를 수정하기 위해 exact props를 추가함, exact props는 Route 컴포넌트가
+path props와 정확하게 일치하는 URL에만 반응하도록 만들어줌
+```js
+import "./App.css"
+import { HashRouter, Route } from "react-router-dom";
+import About from './routes/About';
+import Home from './routes/Home';
+
+function App() {
+    return  (
+        <HashRouter>
+            <Route path="/" exact={true} component={Home} />
+            <Route path="/about" component={About} />
+        </HashRouter>
+    );
+}
+
+export default App;
+```
+
 ## [10월 13일]
 >
 - isLoding state true -> false로 업데이트
