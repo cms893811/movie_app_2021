@@ -1,4 +1,168 @@
 # 최재학 202030432
+## [11월 03일]
+> 
+### package.json과 package-lock.json 차이
+- package.json은 패키지 의존성 관리 파일
+- 협업을 할 때는 팀원들 각자의 컴퓨터에 같은 패키지들을 설치해서 동일한 개발환경을 구성해야 하는게 이때 사용하는 것이 package.json
+- package.json의 경우 version range를 사용한다.
+- package-lock.json은 package.json이 변경될 때 마다 업데이트 되는 것으로 좀 더 정확한 버전이 기록되어 있다.
+- package.json과 package-lock.json이 충돌이 생길 경우, 보통 node 모듈을 지우고 다시 설치 시 대부분은 해결이 되지만 모듈이 설치가 안되거나
+  설치되도 같은 오류가 생길 경우 package.json과 package-lock.jso을 삭제하고 다시 모듈을 설치하면 해결된다.
+<br>
+
+### Markdown Tip
+- npm cache clean --force
+- npm rebulid
+- rm -f node_modules
+- npm install
+- 원인 모를 문제가 발생했을 때 cache clean과 rebuild를 통해 많은 부분을 해결할 수 있다.
+
+### 네비게이션 만들어보기
+- Navigation 컴포넌트 생성
+- App 컴포넌트에 Navigation 컴포넌트 포함
+```js
+function Navigation() {
+  return (
+    <div>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+    </div>
+  );
+}
+
+export default Navigation;
+```
+<br>
+
+- 현재는 a태그의 href 속성의 새로고침되는 특징 때문에 리액트의 장점이 없음. 이 문제를 해결하기 위해 react-router-dom의 Link 컴포넌트를 사용하면 됨.
+<br>
+
+### Link 컴포넌트
+```js
+import { Link } from 'react-router-dom';
+
+function Navigation() {
+  return (
+    <div>
+      <Link to="/">Home</Link>
+      <Link to="/about">About</Link>
+    </div>
+  );
+}
+
+export default Navigation;
+```
+<br>
+
+### 영화 상세 정보 기능
+- route props : 라우팅 대상이 되는 컴포넌트에 넘겨주는 기본 props
+- consol.log를 통해 About으로 어떤 props가 넘어오는지 확인
+- react-router-dom에서 Route 컴포넌트가 그려줄 컴포넌트에 전달한 props를 확인할 수 있음
+- route props에 데이터를 담아 보내려면 Navigation 컴포넌트에 있는 Link 컴포넌트의 to props 구조를 변경해야 함
+- pathname은 URL을 의미, state는 route props에 보내줄 데이터를 의미
+- Movie 컴포넌트에 Link 컴포넌트 추가
+```js
+import PropTyes from 'prop-types'
+import "./Movie.css"
+import { Link } from 'react-router-dom';
+
+function Movie({title,year,summary,poster, genres}){
+    return (
+        <div className="movie">
+            <Link to={{
+                pathname: 'movie-detail',
+                state: {year, title, summary, poster, genres}
+            }}>
+                <img src={poster} alt={title} title={title} />
+                <div className="movie-data">
+                    <h3 className="movie-title">{title}</h3>
+                    <h5 className="movie-year">{year}</h5>
+                    <ul className="moive-geners">
+                        {genres.map((genre, index) => {
+                            return (
+                                <li key={index} className="movie-genre">{genre}</li>
+                            )
+                        })}
+                    </ul>
+                    <p className="movie-summary">{summary.slice(0, 180)}...</p>
+                </div>
+            </Link>
+        </div>
+    )
+}
+
+Movie.PropTyes = {
+    year: PropTyes.string.isRequired,
+    title: PropTyes.string.isRequired,
+    summary: PropTyes.string.isRequired,
+    poster: PropTyes.string.isRequired,
+    genres: PropTyes.arrayOf(PropTyes.string).isRequired
+}
+
+export default Movie;
+```
+- detail 컴포넌트 생성
+```js
+function Detail(props) {
+  console.log(props);
+  return <span>hello</span>;
+}
+
+export default Detail;
+```
+<br>
+- Route 컴포넌트 추가
+
+### 리다이렉트 기능 만들기
+- Detail 컴포넌트 클래스형 컴포넌트로 변경 - componentDidMount() 함수를 사용해 Detail 컴포넌트가 마운트될 때 push() 함수를 사용하기 위해
+- push() : 지정한 URL로 보내줌
+```js
+import React from "react";
+
+class Detail extends React.Component {
+  componentDidMount() {
+    const {location, history} = this.props;
+    if(location.state === undefined){
+      history.push('/');
+    }
+  }
+
+  render() {
+    return (
+      <span>hello</span>
+    );
+  }
+}
+
+export default Detail;
+```
+
+### 영화 제목 출력하기
+- location.state.title 출력
+```
+ render() {
+    const {location} = this.props;
+    return (
+      <span>{location.state.title}</span>
+    );
+  }
+```
+- Detail 컴포넌트는 render() -> componenetDidMount() 순서로 실행하기 때문에 작동하지 않음, render() 함수에도 componenetDidMount()에 작성한 리다이렉트 코드를
+추가하면 됨
+```js
+render() {
+  const {location} = this.props;
+  if(location.state) {
+    return (
+      <span>{location.state.title}</span>
+    );
+  } else {
+    return null;
+  }
+}
+```
+- 새로고침 또는 주소 입력 시 render()는 null을 반환하고 componentDidMount()의 리다이렉트 기능이 동작하게 됨
+
 ## [10월 27일]
 >router
 - genres props는 배열이므로 map 함수를 이용해 출력
