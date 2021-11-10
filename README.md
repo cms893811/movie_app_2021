@@ -31,6 +31,14 @@
 - 배포: npm run deploy
 <br>
 
+### CDN
+- CDN: Content Delivery Network 또는 Content Distiribution Network
+- CORS: 특정 헤더를 통해서 브라우저에게 원 출처(origin)에서 실행되고 있는 웹 애플리케이션이 다른 출처(cross-origin)에 원하는 리소스에 접근할 수 있는 권한이 있는지 없는지를 알려주는 메커니즘
+- Babel: ECMAScript 2015 + 코드를 이전 JavaScript 엔진에서 실행할 수 있는 이전 버전과 호환되는 JavaScript 버전으로 변환하는 데 주로 사용되는 무료 오픈 소스 JavaScript 트랜스 컴파일러
+
+### 
+<br>
+
 ## [11월 03일]
 > 
 ### package.json과 package-lock.json 차이
