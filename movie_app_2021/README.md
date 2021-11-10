@@ -1,4 +1,36 @@
 # 최재학 202030432
+## [11월 10일]
+> 깃허브 배포하기
+### package.json 수정
+```js
+"scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  (생략...)
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "homepage": "https:cms893811.github.io/movie_app_2021"
+}
+```
+
+- gh-pages 설치: npm install gh-pages
+- 깃 허브 저장소 확인: git remote -v
+- 배포: npm run deploy
+<br>
+
 ## [11월 03일]
 > 
 ### package.json과 package-lock.json 차이
@@ -8,7 +40,6 @@
 - package-lock.json은 package.json이 변경될 때 마다 업데이트 되는 것으로 좀 더 정확한 버전이 기록되어 있다.
 - package.json과 package-lock.json이 충돌이 생길 경우, 보통 node 모듈을 지우고 다시 설치 시 대부분은 해결이 되지만 모듈이 설치가 안되거나
   설치되도 같은 오류가 생길 경우 package.json과 package-lock.jso을 삭제하고 다시 모듈을 설치하면 해결된다.
-<br>
 
 ### Markdown Tip
 - npm cache clean --force
@@ -32,7 +63,6 @@ function Navigation() {
 
 export default Navigation;
 ```
-<br>
 
 - 현재는 a태그의 href 속성의 새로고침되는 특징 때문에 리액트의 장점이 없음. 이 문제를 해결하기 위해 react-router-dom의 Link 컴포넌트를 사용하면 됨.
 <br>
@@ -111,6 +141,7 @@ function Detail(props) {
 export default Detail;
 ```
 <br>
+
 - Route 컴포넌트 추가
 
 ### 리다이렉트 기능 만들기
@@ -162,7 +193,7 @@ render() {
 }
 ```
 - 새로고침 또는 주소 입력 시 render()는 null을 반환하고 componentDidMount()의 리다이렉트 기능이 동작하게 됨
-
+<br>
 ## [10월 27일]
 >router
 - genres props는 배열이므로 map 함수를 이용해 출력
