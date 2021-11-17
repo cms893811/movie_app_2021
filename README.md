@@ -1,4 +1,40 @@
 # 최재학 202030432
+## [11월 17일]
+> TodoList, 
+### TodoList
+- TodoApp과 TodoList 두 개의 컴포넌트로 구성
+- handleChange는 모든 키보드 입력마다 React의 state를 갱신해서 보여준다.
+- 시간순으로 보면 다음과 같이 동작한다.
+- 유저입력 > handleChange > React의 state 갱신 > form element가 React state를 참조
+- 유저 입력을 강제로 대문자로 변경할 경우에도 사용
+```js
+handleChange(event) {
+  this.setState({value: event.target.value.toUpperCase()})
+}
+```
+<br>
+- render()메소드에서 초기 렌더링을 실행한다.
+- onChange를 통해 input에 입력되는 값으로 state 상태 변경을 준비한다.
+- 입력된 값은 state "text: " "에 임시로 저장된다.
+- lavel의 htmlFor은 input과의 연결을 위한 id값이다.
+- className처럼 html
+- 버튼을 클릭하면 버튼의 숫자를 증가시킨다.
+- 리스트는 배열로 저장되기 때문에 item.length를 통해 list의 수를 확인한다.
+- input area에 이벤트가 발생하면 handleChange(e)가 동작하여 State의 text값을 변경한다.
+- "Add #x"버튼을 클릭하면 리스트의 length에 1을 더해서 버튼에 출력한다.
+
+### key props의 역할
+- key는 props의 안정적으로 사용할 수 있도록 고유성을 부여하기 위해 필요
+- React가 어떤 props를 변경, 추가 또는 삭제할 지 식별하는 것을 도와준다.
+- 반드시 date를 사용하지 않아도 된다. 배열의 inedex값
+- 유일한 값이라면 그 값이 무엇이든 상관없다.
+
+### handleSubmit(e)에서 preventDefault()를 사용하는 이유
+- Refresh를 막기 위해서
+
+### 외부 플러그인을 사용하는 컴포넌트
+- 외부 플러그인은 Remarkable을 사용함으로 CDN으로 링크를 추가한다.
+- remarkable.js로 검색해야 찾을 수 있다.
 ## [11월 10일]
 > 깃허브 배포하기
 ### package.json 수정
