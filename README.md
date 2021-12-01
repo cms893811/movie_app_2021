@@ -1,4 +1,158 @@
 # 최재학 202030432
+## [12월 01일]
+> state와 생명주기, 이벤트 처리
+## Clock 컴포넌트 재사용하고 캡슐화
+``` js
+function Clock(props) {
+  return (
+    <div>
+      <h1>Hello, world!</h1>
+      <h2>It is {props.date.toLocaleTimeString()}.</h2>
+    </div>
+  );
+}
+
+function tick() {
+  ReactDOM.render(
+    <Clock date={new Date()} />,
+    document.getElementById('root')
+  );
+}
+
+setInterval(tick, 1000);
+```
+- Clock이 갱신되도록 하려면 Clock 컴포넌트에 'state'를 추가
+```js
+ReactDOM.render(
+  <Clock />,
+  document.getElementById('root')
+);
+```
+- state는 props와 유사하지만, 비공개이며 컴포넌트에 의해 완전히 제어됨
+### 함수에서 클래스로 변환
+1. React.Component를 확장하는 동일한 이름의 ES6 class를 생성
+2. render()라고 불리는 빈 메서드를 추가.
+3. 함수의 내용을 render() 메서드 안으로 옮김
+4. render() 내용 안에 있는 props를 this.props로 변경
+5. 남아있는 빈 함수 선언을 삭제
+```js
+class Clock extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.props.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+```
+- this는 super props와 구별하기 위해 사용
+
+### 클래스에 로컬 state 추가
+1. render() 메서드 안에 있는 this.props.date를 this.state.date로 변경
+2. 초기 this.state를 지정하는 class constructor를 추가
+3. <Clock /> 요소에서 date prop을 삭제
+
+```js
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {date: new Date()}; // 2
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2> // 1
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Clock />, // 3
+  document.getElementById('root')
+);
+```
+- 클래스 컴포넌트는 항상 props로 기본 constructor를 호출해야 함
+
+### 시간 갱신을 위해 생명주기 메서드를 클래스에 추가
+
+- 많은 컴포넌트가 있는 애플리케이션에서 컴포넌트가 삭제될 때 해당 컴포넌트가 사용 중이던 리소스를 확보하는 것이 중요
+- Clock이 처음 DOM에 렌더링 될 때마다 타이머를 설정하려고 함. 이것을 React에서 “마운팅”이라고 함
+- Clock에 의해 생성된 DOM이 삭제될 때마다 타이머를 해제하려고 함. 이것은 React에서 “언마운팅”이라고 함
+- Clock 컴포넌트가 매초 작동하도록 하는 tick()이라는 메서드를 구현함. 컴포넌트 로컬 state를 업데이트하기 위해 this.setState()를 사용
+``` js
+class Clock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {date: new Date()};
+  }
+
+  componentDidMount() {
+    this.timerID = setInterval(
+      () => this.tick(),
+      1000
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    this.setState({
+      date: new Date()
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+```
+- componentDidMount() 메서드는 컴포넌트 출력물이 DOM에 렌더링 된 후에 실행됨
+
+#### 메서드 호출 순서 요약
+1. ```<Clock />``` 가 ReactDOM.render()로 전달되었을 때  React는 Clock 컴포넌트의 constructor를 호출함. Clock이 현재 시각을 표시해야 하기 때문에 현재 시각이 포함된 객체로 this.state를 초기화함.
+2. React는 Clock 컴포넌트의 render() 메서드를 호출하고 이를 통해 React는 화면에 표시되어야 할 내용을 알게 됨. 그 다음 React는 Clock의 렌더링 출력값을 일치시키기 위해 DOM을 업데이트함.
+3. Clock 출력값이 DOM에 삽입되면, React는 componentDidMount() 생명주기 메서드를 호출하고 그 안에서 Clock 컴포넌트는 매초 컴포넌트의 tick() 메서드를 호출하기 위한 타이머를 설정하도록 브라우저에 요청함
+4. 매초 브라우저가 tick() 메서드를 호출함. 그 안에서 Clock 컴포넌트는 setState()에 현재 시각을 포함하는 객체를 호출하면서 UI 업데이트를 진행. setState() 호출 덕분에 React는 state가 변경된 것을 인지하고 화면에 표시될 내용을 알아내기 위해 render() 메서드를 다시 호출함. 이 때 render() 메서드 안의 this.state.date가 달라지고 렌더링 출력값은 업데이트된 시각을 포함함. React는 이에 따라 DOM을 업데이트
+5. Clock 컴포넌트가 DOM으로부터 한 번이라도 삭제된 적이 있다면 React는 타이머를 멈추기 위해 componentWillUnmount() 생명주기 메서드를 호출
+
+### setSTate에 대한 3가지
+- 직접 State를 수정하면 안됨. 대신 setState를 사용. this.state를 지정할 수 있는 유일한 곳은 생성자 뿐임
+- state 업데이트는 비동기적일 수도 있음
+- React는 성능을 위해 여러 setState() 호출을 단일 업데이트로 한꺼번에 처리할 있음. this.props와 this.state가 비동기적으로 업데이트될 수 있기 때문에 다음 state를 계산할 때 해당 값에 의존해서는 안됨.(this 사용X)
+- state 업데이는 병합됨(덮여 쓰인다)
+
+### 데이터는 아래로 흐른다(부모(super) -> 자식(sub))
+- 컴포넌트는 자신의 state를 자식 컴포넌트에 props로 전달할 수 있음.
+
+### React 앱에서 컴포넌트가 유상태 또는 무상태에 대한 것은 시간이 지남에 따라 변경될 수 있는 구현 세부 사항으로 간주
+- 유상태(stateful): state가 있는 컴포넌트, Stateful 컴포넌트는 늘 클래스 컴포넌트이며,  생성자에서 초기화되는 state가 있음.
+- 무상태(stateless): state가 없는 컴포넌트, stateless 컴포넌트 작성 시 최대한 state를 사용하지 않도록 컴포넌트를 구현해야 버그 수정이나 유지보수가 쉬워짐
+
+## 이벤트 처리
+- React의 이벤트는 소문자 대신 캐멀 케이스(camelCase)를 사용
+- JSX를 사용하여 문자열이 아닌 함수로 이벤트 핸들러를 전달
+- React에서는 false를 반환해도 기본 동작을 방지할 수 없음. 반드시 preventDefault를 명시적으로 호출해야 함
+- React를 사용할 때 DOM 엘리먼트가 생성된 후 리스너를 추가하기 위해 addEventListener를 호출할 필요없음. 대신, 엘리먼트가 처음 렌더링될 때 리스너를 제공하면 됨
+
+## 조건부 렌더링
+- React에서 조건부 렌더링은 JavaScript에서의 조건 처리와 같이 동작
+### 엘리먼트 변수
+- 엘리먼트를 저장하기 위해 변수사용, 출력의 다른 부분은 변하지 않은 채로 컴포넌트의 일부를 조건부로 렌더링 할 수 있음
+
+
+
 ## [11월 24일]
 > 
 ### React 주요 개념
