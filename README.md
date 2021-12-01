@@ -150,6 +150,25 @@ class Clock extends React.Component {
 - React에서 조건부 렌더링은 JavaScript에서의 조건 처리와 같이 동작
 ### 엘리먼트 변수
 - 엘리먼트를 저장하기 위해 변수사용, 출력의 다른 부분은 변하지 않은 채로 컴포넌트의 일부를 조건부로 렌더링 할 수 있음
+### 논리 && 연산자로 If를 인라인으로 표현
+- JavaScript에서 true && expression은 항상 expression이고 false && expression은 항상 false임
+- 따라서 && 뒤의 엘리먼트는 조건이 true일때 출력 됨. 조건이 false라면 무시하고 건너 뜀
+- falsy 표현식을 반환하면 여전히 && 뒤에 있는 표현식은 건너뛰지만 falsy 표현식이 반환된다는 것에 주의
+### 조건부 연산자로 If-Else 구문 인라인으로 표현
+- condition ? true: false를 사용하는 것.
+```js
+render() {
+  const isLoggedIn = this.state.isLoggedIn;
+  return (
+    <div>
+      The user is <b>{isLoggedIn ? 'currently' : 'not'}</b> logged in.
+    </div>
+  );
+}
+```
+### 컴포넌트가 렌더링하는 것 막기
+- 가끔 다른 컴포넌트에 의해 렌더링될 때 컴포넌트 자체를 숨기고 싶을 때 렌더링 결과를 출력하는 대신 null을 반환하면 해결할 수 있음
+- 컴포넌트의 render 메서드로부터 null을 반환하는 것은 생명주기 메서드 호출에 영향을 주지 않음
 
 
 
