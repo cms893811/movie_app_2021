@@ -1,4 +1,123 @@
 # 최재학 202030432
+## [12월 08일]
+> 보충 수업
+## 리스트와 Key
+- react에서 배열을 엘리먼트 리스트로 만드는 방식과 유사
+### 여러개의 엘리먼트 렌더링 하기
+- 배열로 부터 항목을 꺼내 <li> 엘리먼트를 반환하고 엘리먼트 배열의 결과를 listItems에 저장함
+```js
+const numbers = [1, 2, 3, 4, 5];
+const listItems = numbers.map((number) =>
+  <li>{number}</li>
+);
+```
+- listItems 배열을 <ul> 엘리먼트 안에 포함하고 DOM에 렌더링
+```js
+ReactDOM.render(
+  <ul>{listItems}</ul>,
+  document.getElementById('root')
+);
+```
+
+### 기본리스트 컴포넌트
+``` js
+function NumberList(props) {
+  const numbers = props.numbers;
+  const listItems = numbers.map((number) =>
+    <li key={number.toString()}>
+      {number}
+    </li>
+  );
+  return (
+    <ul>{listItems}</ul>
+  );
+}
+
+const numbers = [1, 2, 3, 4, 5];
+ReactDOM.render(
+  <NumberList numbers={numbers} />,
+  document.getElementById('root')
+);
+```
+### Key
+- key는 React가 어떤 항목을 변경, 추가 또는 삭제할지 식별하는 것을 도움. key는 엘리먼트에 고유성을 부여하기 위해 배열 내부의 엘리먼트에 지정해야 함
+- 항목이 고정적인 경우 배열의 index  값을 사용한다.
+- 다만 항목의 순서가 바뀔 수 있는 경우 index의 사용을 권장하지 않음.
+- 이로 인해 성능이 저하되거나 컴포넌트의 state와 관련된 문제가 발생할 수 있음.
+- key는 주변 배열의 context에서만 의미가 있음
+- map() 함수 내부에 있는 엘리먼트에 key를 넣어주는 것이 좋음
+- key는 형제 사이에서만 고유한 값이어야 하며, 전체 범위에서 고유할 필요는 없음. 두 개 이상의 다른 배열을 만들 때 동일한 key를 사용할 수 있음
+
+### JSX에 map() 포함하기
+- JSX를 사용하면 중괄호 안에 모든 표현식을 포함 시킬 수 있으므로 map() 함수의 결과를 인라인으로 처리할 수 있음
+```js
+function NumberList(props) {
+  const numbers = props.numbers;
+  return (
+    <ul>
+      {numbers.map((number) =>
+        <ListItem key={number.toString()}
+                  value={number} />
+      )}
+    </ul>
+  );
+}
+```
+## 폼
+- 폼 엘리먼트는 폼 엘리먼트 자체가 내부 상태를 가지기 때문에 React의 다른 DOM 엘리먼트와 다르게 동작함
+- 대부분의 경우 JavaScript 함수로 폼의 제출을 처리하고 사용자가 폼에 입력한 데이터에 접근하도록 하는 것이 편리함. 이를 위한 표준 방식이 제어 컴포넌트
+
+### 제어 컴포넌트
+- React state를 신뢰 가능한 단일 출처(Single Source of Truth)로 만들어 두 요소를 결합할 수 있음. 그러면 폼을 렌더링하는 React 컴포넌트는 폼에 발생하는 사용자 입력값을 제어하며, 이러한 방식으로 React에 의해 값이 제어되는 입력 폼 엘리먼트를 제어 컴포넌트라고 함
+- 예시) 전송될 때 이름을 기록
+``` js
+  class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('A name was submitted: ' + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Name:
+          <input type="text" value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+```
+### textarea 태그
+- React에서 <textarea>는 value attribute 대신 사용한다. 이렇게하면 <textarea>를 사용하는 폼은 한 줄 입력을 사용하는 폼과 비슷하게 작성할 수 있다.
+
+### select 태그
+- HTML에서 <select>는 드롭다운 목록을 만든다.
+- react에서는 selected 어트리뷰트를 사용하는 대신 최상단 select태그에 value 어트리뷰트를 사용한다. 한 곳에서 업데이트만 하면 되기 때문에 제어 컴포넌트에서 사용하기 더 편하다.
+
+### file input 태그
+- 값이 읽기 전용이기 때문에 React에서는 비제어 컴포넌트임
+
+### 제어되는 Input Null 값
+- 제어 컴포넌트에 value prop을 지정하면 의도하지 않는 한 사용자가 변경할 수 없음
+
+## State 끌어올리기
+
+
 ## [12월 01일]
 > state와 생명주기, 이벤트 처리
 ## Clock 컴포넌트 재사용하고 캡슐화
